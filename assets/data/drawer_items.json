@@ -1,0 +1,142 @@
+{
+    "drawerItems": [
+      {
+        "icon": "userLock",
+        "title": "Authorization",
+        "page": "authorization",
+        "route": "authorization",
+        "iconColor": "authorizationColor"
+      },
+      {
+        "icon": "cog",
+        "title": "Settings",
+        "page": "Settings",
+        "route": "settings",
+        "iconColor": "settingsColor"
+      },
+      {
+        "icon": "infoCircle",
+        "title": "About the Party",
+        "page": null,
+        "iconColor": "aboutPartyColor",
+        "subItems": [
+          {
+            "icon": "bullhorn",
+            "title": "Xenium Party",
+            "page": "Xenium Party",
+            "url": "https://2024.xenium.rocks/about/xenium/",
+            "iconColor": "aboutPartyColor"
+          },
+          {
+            "icon": "users",
+            "title": "Organizers",
+            "page": "Organizers",
+            "url": "https://2024.xenium.rocks/about/orgas/",
+            "iconColor": "aboutPartyColor"
+          },
+          {
+            "icon": "exclamationTriangle",
+            "title": "Important Changes",
+            "page": "Important Changes",
+            "url": "https://2024.xenium.rocks/about/wazne-zmiany/",
+            "iconColor": "aboutPartyColor"
+          },
+          {
+            "icon": "question",
+            "title": "First Time Visitor?",
+            "page": "First Time Visitor?",
+            "url": "https://2024.xenium.rocks/about/czym-jest-demoscena/",
+            "iconColor": "aboutPartyColor"
+          }
+        ]
+      },
+      {
+        "icon": "newspaper",
+        "title": "News",
+        "page": "News",
+        "route": "news",
+        "iconColor": "newsColor"
+      },
+      {
+        "icon": "video",
+        "title": "Streams",
+        "page": "Streams",
+        "route": "streams",
+        "iconColor": "streamsColor"
+      },
+      {
+        "icon": "calendar",
+        "title": "Timetable",
+        "page": "Timetable",
+        "route": "timeTable",
+        "iconColor": "timetableColor"
+      },
+      {
+        "icon": "trophy",
+        "title": "Competitions",
+        "page": null,
+        "iconColor": "competitionsColor",
+        "subItems": [
+          {
+            "icon": "book",
+            "title": "General Rules",
+            "page": "General Rules",
+            "url": "https://2024.xenium.rocks/kompoty/zasady/",
+            "iconColor": "competitionsColor"
+          },
+          {
+            "icon": "desktop",
+            "title": "Demo",
+            "page": "Demo",
+            "url": "https://2024.xenium.rocks/kompoty/demo/",
+            "iconColor": "competitionsColor"
+          }
+        ]
+      },
+      {
+        "icon": "handsHelping",
+        "title": "Get Involved",
+        "page": null,
+        "iconColor": "getInvolvedColor",
+        "subItems": [
+          {
+            "icon": "ticketAlt",
+            "title": "Admission",
+            "page": "Admission",
+            "url": "https://2024.xenium.rocks/wez-udzial/wstep/",
+            "iconColor": "getInvolvedColor"
+          },
+          {
+            "icon": "fileUpload",
+            "title": "Submit Work",
+            "page": "Submit Work",
+            "url": "https://2024.xenium.rocks/wez-udzial/zglos-prace/",
+            "iconColor": "getInvolvedColor"
+          }
+        ]
+      },
+      {
+        "icon": "mapMarkerAlt",
+        "title": "Location",
+        "page": null,
+        "iconColor": "locationColor",
+        "subItems": [
+          {
+            "icon": "car",
+            "title": "Transportation & Parking",
+            "page": "Transportation & Parking",
+            "url": "https://2024.xenium.rocks/lokalizacja/dojazd/",
+            "iconColor": "locationColor"
+          },
+          {
+            "icon": "bed",
+            "title": "Accommodation",
+            "page": "Accommodation",
+            "url": "https://2024.xenium.rocks/lokalizacja/nocleg/",
+            "iconColor": "locationColor"
+          }
+        ]
+      }
+    ]
+  }
+  

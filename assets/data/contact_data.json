@@ -1,0 +1,51 @@
+{
+    "emails": [
+      {
+        "type": "General Inquiry",
+        "details": "xenium@xenium.rocks",
+        "icon": "email",
+        "action": "mailto:xenium@xenium.rocks"
+      },
+      {
+        "type": "Compo Submissions",
+        "details": "prods@xenium.rocks",
+        "icon": "email",
+        "action": "mailto:prods@xenium.rocks"
+      }
+    ],
+    "socialMedia": [
+      {
+        "type": "Facebook",
+        "details": "Xenium Party",
+        "icon": "facebook",
+        "action": "https://www.facebook.com/xeniumparty/"
+      },
+      {
+        "type": "YouTube",
+        "details": "Xenium Channel",
+        "icon": "youtube",
+        "action": "https://www.youtube.com/@xeniumparty/"
+      },
+      {
+        "type": "Discord",
+        "details": "Join our community",
+        "icon": "discord",
+        "action": "https://discord.com/channels/534447164043165696/874957822562013194"
+      }
+    ],
+    "other": [
+      {
+        "type": "Official Website",
+        "details": "Visit Xenium",
+        "icon": "info",
+        "action": "https://xenium.rocks"
+      },
+      {
+        "type": "Mastodon",
+        "icon": "website",
+        "details": "Mastodon",
+        "action": "https://icosahedron.website/@xenium"
+      }
+    ]
+  }
+  
