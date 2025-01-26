@@ -80,7 +80,7 @@ class AppRouter {
     ),
       GoRoute(
         name: 'content',
-        path: AppRouterPaths.generic_content,
+        path: AppRouterPaths.content,
         builder: (BuildContext context, GoRouterState state) {
           final url = state.uri.queryParameters['url']!;
           final title = state.uri.queryParameters['title']!;

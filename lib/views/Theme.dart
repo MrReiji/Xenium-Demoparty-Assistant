@@ -149,108 +149,99 @@ class AppOffsets {
 
 // Light theme configuration
 ThemeData lightThemeData(BuildContext context) {
-  // Jasne, ciepłe odcienie kremowo-beżowe komplementujące pomarańcz
-  const backgroundColorLightEnd = Color(0xFFF2EEE7); // Tło główne (jaśniejsze beżowo-kremowe)
-  const backgroundColorLightStart = Color(0xFFEBE6DD); // Kolor wypełnień lekko ciemniejszy od głównego tła
-  const textColorDarkOnLight = Color(0xFF2C2C2C); // Ciemny szary tekst dla kontrastu
-
   return ThemeData.light().copyWith(
     primaryColor: primaryColor,
-    scaffoldBackgroundColor: backgroundColorLightEnd,
+    scaffoldBackgroundColor: bgColorScreen,
     appBarTheme: AppBarTheme(
       centerTitle: false,
       elevation: AppDimensions.elevation,
-      backgroundColor: backgroundColorLightEnd,
+      backgroundColor: bgColorScreen,
       titleTextStyle: GoogleFonts.anta(
         fontSize: 22.0,
         fontWeight: FontWeight.w600,
-        color: textColorDarkOnLight,
+        color: textColorPrimary,
       ),
-      iconTheme: IconThemeData(color: textColorDarkOnLight),
-      surfaceTintColor: backgroundColorLightEnd,
+      iconTheme: IconThemeData(color: textColorPrimary),
+      surfaceTintColor: secondaryColor,
     ),
-    iconTheme: IconThemeData(color: textColorDarkOnLight),
+    iconTheme: IconThemeData(color: textColorPrimary),
     textTheme: GoogleFonts.antaTextTheme(
       Theme.of(context).textTheme.copyWith(
-        displayLarge: TextStyle(
-            fontSize: 55.0,
-            fontWeight: FontWeight.bold,
-            color: textColorDarkOnLight),
-        displayMedium: TextStyle(
-            fontSize: 22.0,
-            fontWeight: FontWeight.bold,
-            color: textColorDarkOnLight),
-        displaySmall: TextStyle(
-            fontSize: 22.0,
-            fontWeight: FontWeight.bold,
-            color: textColorDarkOnLight),
-        headlineLarge: TextStyle(
-            fontSize: 22.0,
-            fontWeight: FontWeight.w600,
-            color: textColorDarkOnLight),
-        headlineMedium: TextStyle(
-            fontSize: 20.0,
-            fontWeight: FontWeight.w600,
-            color: textColorDarkOnLight),
-        titleLarge: TextStyle(
-            fontSize: 20.0,
-            fontWeight: FontWeight.w500,
-            color: textColorDarkOnLight),
-        bodyLarge: TextStyle(
-            fontSize: 20.0,
-            fontWeight: FontWeight.normal,
-            color: textColorDarkOnLight),
-        bodyMedium: TextStyle(
-            fontSize: 14.0,
-            fontWeight: FontWeight.normal,
-            color: textColorDarkOnLight),
-        labelLarge: TextStyle(
-            fontSize: 16.0,
-            fontWeight: FontWeight.w500,
-            color: textColorDarkOnLight),
-        labelMedium: TextStyle(
-            fontSize: 14.0,
-            fontWeight: FontWeight.w500,
-            color: textColorDarkOnLight),
-        labelSmall: TextStyle(
-            fontSize: 12.0,
-            fontWeight: FontWeight.w500,
-            color: textColorDarkOnLight),
-        headlineSmall: TextStyle(
-            fontSize: 18.0,
-            fontWeight: FontWeight.w600,
-            color: textColorDarkOnLight),
-        titleMedium: TextStyle(
-            fontSize: 18.0,
-            fontWeight: FontWeight.w500,
-            color: textColorDarkOnLight),
-        titleSmall: TextStyle(
-            fontSize: 16.0,
-            fontWeight: FontWeight.w500,
-            color: textColorDarkOnLight),
-        bodySmall: TextStyle(
-            fontSize: 12.0,
-            fontWeight: FontWeight.normal,
-            color: textColorDarkOnLight),
-      ),
+            displayLarge: TextStyle(
+                fontSize: 55.0,
+                fontWeight: FontWeight.bold,
+                color: textColorPrimary),
+            displayMedium: TextStyle(
+                fontSize: 22.0,
+                fontWeight: FontWeight.bold,
+                color: textColorPrimary),
+            displaySmall: TextStyle(
+                fontSize: 22.0,
+                fontWeight: FontWeight.bold,
+                color: textColorPrimary),
+            headlineLarge: TextStyle(
+                fontSize: 20.0,
+                fontWeight: FontWeight.w600,
+                color: textColorPrimary),
+            headlineMedium: TextStyle(
+                fontSize: 20.0,
+                fontWeight: FontWeight.w600,
+                color: textColorPrimary),
+            titleLarge: TextStyle(
+                fontSize: 20.0,
+                fontWeight: FontWeight.w500,
+                color: textColorPrimary),
+            bodyLarge: TextStyle(
+                fontSize: 20.0,
+                fontWeight: FontWeight.normal,
+                color: textColorPrimary),
+            bodyMedium: TextStyle(
+                fontSize: 14.0,
+                fontWeight: FontWeight.normal,
+                color: textColorPrimary),
+            labelLarge: TextStyle(
+                fontSize: 16.0,
+                fontWeight: FontWeight.w500,
+                color: textColorPrimary),
+            labelMedium: TextStyle(
+                fontSize: 14.0,
+                fontWeight: FontWeight.w500,
+                color: textColorPrimary),
+            labelSmall: TextStyle(
+                fontSize: 12.0,
+                fontWeight: FontWeight.w500,
+                color: textColorPrimary),
+            headlineSmall: TextStyle(
+                fontSize: 18.0,
+                fontWeight: FontWeight.w600,
+                color: textColorPrimary),
+            titleMedium: TextStyle(
+                fontSize: 18.0,
+                fontWeight: FontWeight.w500,
+                color: textColorPrimary),
+            titleSmall: TextStyle(
+                fontSize: 16.0,
+                fontWeight: FontWeight.w500,
+                color: textColorPrimary),
+            bodySmall: TextStyle(
+                fontSize: 12.0,
+                fontWeight: FontWeight.normal,
+                color: textColorPrimary),
+          ),
     ),
-    colorScheme: ColorScheme.light().copyWith(
+    colorScheme: ColorScheme.light(
       primary: primaryColor,
       secondary: secondaryColor,
       error: errorColor,
-      background: backgroundColorLightEnd,
-      surface: backgroundColorLightEnd,
-      onBackground: textColorDarkOnLight,
-      onSurface: textColorDarkOnLight,
     ),
     dividerTheme: DividerThemeData(
       color: mutedTextColor,
       thickness: 1.0,
     ),
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
-      backgroundColor: backgroundColorLightEnd,
+      backgroundColor: bgColorScreen,
       selectedItemColor: primaryColor.withOpacity(0.7),
-      unselectedItemColor: textColorDarkOnLight.withOpacity(0.32),
+      unselectedItemColor: textColorPrimary.withOpacity(0.32),
       selectedIconTheme: IconThemeData(color: primaryColor),
       showUnselectedLabels: true,
     ),
@@ -267,8 +258,7 @@ ThemeData lightThemeData(BuildContext context) {
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
-      fillColor: backgroundColorLightStart,
-      contentPadding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 20.0),
+      fillColor: Colors.white,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
         borderSide: BorderSide(color: primaryColor),
@@ -279,18 +269,13 @@ ThemeData lightThemeData(BuildContext context) {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
-        borderSide: BorderSide(color: primaryColor, width: 1.5),
+        borderSide: BorderSide(color: primaryColor),
       ),
-      errorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
-        borderSide: BorderSide(color: errorColor, width: 1.5),
-      ),
-      labelStyle: TextStyle(color: textColorDarkOnLight, fontSize: 16.0),
-      hintStyle: TextStyle(color: mutedTextColor, fontSize: 16.0),
+      labelStyle: TextStyle(color: textColorPrimary),
+      hintStyle: TextStyle(color: mutedTextColor),
     ),
   );
 }
-
 
 // Dark theme configuration
 ThemeData darkThemeData(BuildContext context) {

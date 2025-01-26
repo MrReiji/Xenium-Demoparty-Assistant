@@ -1,6 +1,7 @@
 class NewsModel {
   final String title;
   final String content;
+  final String fullContent;
   final String imageUrl;
   final String articleUrl;
   final List<String> categories;
@@ -8,6 +9,7 @@ class NewsModel {
   NewsModel({
     required this.title,
     required this.content,
+    required this.fullContent,
     required this.imageUrl,
     required this.articleUrl,
     required this.categories,
@@ -18,6 +20,7 @@ class NewsModel {
     return NewsModel(
       title: json['title'],
       content: json['content'],
+      fullContent: json['fullContent'] ?? '',
       imageUrl: json['imageUrl'],
       articleUrl: json['articleUrl'],
       categories: List<String>.from(json['categories']),
@@ -29,6 +32,7 @@ class NewsModel {
     return {
       'title': title,
       'content': content,
+      'fullContent': fullContent,
       'imageUrl': imageUrl,
       'articleUrl': articleUrl,
       'categories': categories,

@@ -11,7 +11,7 @@ class AppRouterPaths {
   static const satellites = '/satellites';
   static const sponsors = '/sponsors';
   static const seminars = '/seminars';
-  static const generic_content = '/generic_content';
+  static const content = '/content';
   static const voting_results = '/voting_results';
   static const voting = '/voting';
   static const streams = '/streams';

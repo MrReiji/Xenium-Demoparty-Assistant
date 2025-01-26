@@ -37,6 +37,7 @@ class SettingsManager {
   /// - [value]: The numeric value of the reminder (e.g., "15").
   /// - [unit]: The unit of the reminder (e.g., "minutes", "hours").
   Future<void> setReminderSettings(int value, String unit) async {
+    debugPrint("[SettingsManager] Saving reminder settings: value = $value, unit = $unit.");
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setInt(_reminderValueKey, value);

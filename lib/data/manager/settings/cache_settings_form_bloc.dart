@@ -54,8 +54,8 @@ class CacheSettingsFormBloc extends FormBloc<String, String> {
   Future<void> onSubmitting() async {
     emitSubmitting();
     try {
-      // Parse and validate TTL (convert hours to seconds by multiplying by 3600).
-      final ttl = 3600 * int.parse(cacheTTL.value);
+      // Parse and validate TTL.
+      final ttl = int.parse(cacheTTL.value);
       final cacheEnabled = useCache.value;
 
       debugPrint("[CacheSettingsFormBloc] Updating cache settings: TTL=$ttl, CacheEnabled=$cacheEnabled.");

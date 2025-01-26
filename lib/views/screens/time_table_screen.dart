@@ -15,8 +15,7 @@ class TimeTableScreen extends StatefulWidget {
   _TimeTableScreenState createState() => _TimeTableScreenState();
 }
 
-class _TimeTableScreenState extends State<TimeTableScreen>
-    with AutomaticKeepAliveClientMixin {
+class _TimeTableScreenState extends State<TimeTableScreen> with AutomaticKeepAliveClientMixin {
   late final TimeTableManager _manager;
   late Future<void> _dataFuture;
   List<Map<String, dynamic>> _dayData = [];
@@ -42,18 +41,13 @@ class _TimeTableScreenState extends State<TimeTableScreen>
   /// Optionally forces a data refresh.
   Future<void> _initializeData({bool forceRefresh = false}) async {
     try {
-      // Loads the start and end dates of the demoparty.
-      await _manager.loadStartEndDates();
-
-      // Fetches timetable data from the server or cache.
+      setState(() => errorMessage = null);
+      await _manager.loadOnboardingDates();
       await _manager.fetchTimetable(forceRefresh: forceRefresh);
-
-      // Stores fetched data for use in filtering and rendering.
-      _dayData = List.from(_manager.eventsData);
-
-      setState(() {}); // Updates the UI with the loaded data.
+      _dayData = List.from(_manager.eventsData); // Copy original data for filtering.
+      setState(() {});
     } catch (e) {
-      setState(() => errorMessage = e.toString()); // Displays error messages.
+      setState(() => errorMessage = e.toString());
     }
   }
 
@@ -70,8 +64,8 @@ class _TimeTableScreenState extends State<TimeTableScreen>
         _dayData = _manager.eventsData.map((day) {
           final dayDate = day['date'] ?? 'Unknown date';
           final filteredEvents = (day['events'] as List?)
-              ?.where((event) => event.values.any(
-                  (value) => value.toString().toLowerCase().contains(query)))
+              ?.where((event) => event.values.any((value) =>
+                  value.toString().toLowerCase().contains(query)))
               .toList();
           return {
             'date': dayDate,
@@ -92,24 +86,18 @@ class _TimeTableScreenState extends State<TimeTableScreen>
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar:
-
-          /// App Bar with navigation title and refresh functionality.
-          AppBar(
-        title: const Text("TimeTable"), // Displays the title of the screen.
+      appBar: AppBar(
+        title: const Text("TimeTable"),
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh), // Refresh icon.
+            icon: const Icon(Icons.refresh),
             onPressed: () {
-              _searchController.clear(); // Clears the search filter input.
+              // Reset search field and reload data.
+              _searchController.clear();
               setState(() {
-                _dataFuture = _initializeData(
-                    forceRefresh: true); // Reloads timetable data.
+                _dataFuture = _initializeData(forceRefresh: true);
               });
             },
-
-            /// Tooltip for the refresh button to inform users it refreshes the timetable.
-            /// Tooltip displayed when the user long-presses the button.
             tooltip: "Refresh Timetable",
           ),
         ],
@@ -145,102 +133,81 @@ class _TimeTableScreenState extends State<TimeTableScreen>
       children: [
         Padding(
           padding: const EdgeInsets.all(12.0),
-          child:
-
-              /// Search field for filtering events dynamically.
-              TextField(
-            controller: _searchController, // Manages user input.
+          child: TextField(
+            controller: _searchController,
             decoration: InputDecoration(
-              labelText: 'Search', // Placeholder text for the search field.
-              prefixIcon: const Icon(
-                  Icons.search), // Search icon to indicate functionality.
+              labelText: 'Search',
+              prefixIcon: const Icon(Icons.search),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12.0), // Rounded borders.
+                borderRadius: BorderRadius.circular(12.0),
               ),
             ),
-            onChanged: (query) =>
-                _applyFilter(), // Updates the filtered event list on input.
           ),
         ),
         Expanded(
           child: RefreshIndicator(
-              onRefresh: () async {
-                // Reset search field and reload data.
-                _searchController.clear();
-                setState(() {
-                  _dataFuture = _initializeData(forceRefresh: true);
-                });
-                await _dataFuture;
+            onRefresh: () async {
+              // Reset search field and reload data.
+              _searchController.clear();
+              setState(() {
+                _dataFuture = _initializeData(forceRefresh: true);
+              });
+              await _dataFuture;
+            },
+            child: ListView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 12.0),
+              itemCount: _dayData.length,
+              itemBuilder: (context, index) {
+                final day = _dayData[index];
+                final dayDate = day['date'] ?? 'Unknown date';
+                final events = day['events'] as List? ?? [];
+                return _buildDayDataWidget(dayDate, events);
               },
-              child:
-
-                  /// Scrollable list of events grouped by date.
-                  ListView.builder(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 12.0), // Adds horizontal padding for alignment.
-                itemCount:
-                    _dayData.length, // Total number of date groups to display.
-                itemBuilder: (context, index) {
-                  final day = _dayData[
-                      index]; // Retrieves the data for the current day.
-                  final dayDate = day['date'] ??
-                      'Unknown date'; // Retrieves the date header for the day.
-                  final events = day['events'] as List? ??
-                      []; // Retrieves the list of events for the day.
-                  return _buildDayDataWidget(
-                      dayDate, events); // Builds the UI for the day's events.
-                },
-              )),
+            ),
+          ),
         ),
       ],
     );
   }
 
-  /// Builds the UI for a specific day's events.
-  /// Displays a fallback message if no events are available.
+  /// Builds a widget for a specific day's events.
+  /// If there are no events, displays a message instead.
   Widget _buildDayDataWidget(String dayDate, List events) {
-    final theme =
-        Theme.of(context); // Retrieves the current app theme for styling.
+    final theme = Theme.of(context);
+
     return Padding(
-      padding: const EdgeInsets.only(
-          bottom: 16.0), // Adds spacing below the day's events.
+      padding: const EdgeInsets.only(bottom: 16.0),
       child: Column(
-        crossAxisAlignment:
-            CrossAxisAlignment.start, // Aligns content to the left.
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            dayDate, // Displays the date header (e.g., Friday (2024-12-13)).
+            dayDate,
             style: theme.textTheme.titleLarge?.copyWith(
-              color: theme.colorScheme.onSurface, // Sets the text color.
-              fontWeight: FontWeight.bold, // Uses bold font for emphasis.
+              color: theme.colorScheme.onBackground,
+              fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 8.0), // Adds spacing below the date header.
+          const SizedBox(height: 8.0),
           if (events.isEmpty)
-            _buildNoEventsMessage(
-                theme) // Calls a method to display a fallback message for no events.
+            _buildNoEventsMessage(theme)
           else
             Column(
               children: events.map<Widget>((event) {
-                final eventMap =
-                    Map<String, dynamic>.from(event); // Parses event data.
+                final eventMap = Map<String, dynamic>.from(event);
                 return Padding(
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 4.0), // Adds spacing between event cards.
+                  padding: const EdgeInsets.symmetric(vertical: 4.0),
                   child: EventCard(
-                    time: eventMap['time'] ?? '', // Event's start time.
-                    icon: IconData(eventMap['icon'],
-                        fontFamily: eventMap['fontFamily']), // Event type icon.
-                    title: eventMap['description'] ?? '', // Event title.
-                    color: Color(eventMap[
-                        'color']), // Background color for the event type.
-                    label: eventMap['type'] ?? '', // Event type label.
+                    time: eventMap['time'] ?? '',
+                    icon: IconData(eventMap['icon'] ?? 0xe3c9, fontFamily: eventMap['fontFamily'] ?? 'MaterialIcons'),
+                    title: eventMap['description'] ?? '',
+                    color: Color(eventMap['color'] ?? 0xFFCCCCCC),
+                    label: eventMap['type'] ?? '',
                     addToCalendar: () => _manager.addEventToCalendar(
                       dayDate,
                       eventMap['time'] ?? '',
                       eventMap['description'] ?? '',
                       eventMap['type'] ?? '',
-                    ), // Adds the event to the user's personal calendar.
+                    ),
                   ),
                 );
               }).toList(),
@@ -250,36 +217,29 @@ class _TimeTableScreenState extends State<TimeTableScreen>
     );
   }
 
-  /// Displays a fallback message when no events are scheduled for a day.
+  /// Builds a user-friendly message when there are no events for a specific day.
   Widget _buildNoEventsMessage(ThemeData theme) {
     return Container(
-      width: double.infinity, // Spans the full width of the parent container.
+      width: double.infinity,
       decoration: BoxDecoration(
-        color: theme.colorScheme.surface
-            .withOpacity(0.1), // Sets a light background color.
-        borderRadius: BorderRadius.circular(12.0), // Adds rounded corners.
+        color: theme.colorScheme.surface.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12.0),
       ),
-      padding: const EdgeInsets.symmetric(
-          vertical: 16.0, horizontal: 12.0), // Adds internal padding.
+      padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 12.0),
       child: Row(
-        mainAxisAlignment:
-            MainAxisAlignment.center, // Centers the content horizontally.
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
-            Icons.event_busy, // Icon representing no events.
-            color: theme.colorScheme.primary
-                .withOpacity(0.8), // Matches the theme color.
-            size: 28, // Icon size.
+            Icons.event_busy,
+            color: theme.colorScheme.primary.withOpacity(0.8),
+            size: 28,
           ),
-          const SizedBox(
-              width: 8.0), // Adds spacing between the icon and the text.
+          const SizedBox(width: 8.0),
           Text(
-            "No events scheduled for this day", // Informative message text.
+            "No events scheduled for this day",
             style: theme.textTheme.bodyLarge?.copyWith(
-              color: theme.colorScheme.onSurface
-                  .withOpacity(0.9), // Sets the text color.
-              fontWeight:
-                  FontWeight.w500, // Uses medium font weight for emphasis.
+              color: theme.colorScheme.onSurface.withOpacity(0.9),
+              fontWeight: FontWeight.w500,
             ),
           ),
         ],

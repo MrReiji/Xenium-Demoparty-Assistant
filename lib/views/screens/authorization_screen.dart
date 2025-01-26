@@ -9,60 +9,52 @@ import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-/// **Authorization screen**
-/// Handles user authentication, including login, logout, and registration.
-/// Displays different UI depending on the user's logged-in status.
-/// Utilizes `AuthorizationFormBloc` to manage form states and submission.
+/// Authorization screen widget.
 class Authorization extends StatefulWidget {
   @override
   _AuthorizationState createState() => _AuthorizationState();
 }
 
 class _AuthorizationState extends State<Authorization> {
-  final AuthGuard _authGuard = AuthGuard(); // AuthGuard for managing session validity.
-  AuthorizationFormBloc? _formBloc; // Bloc for managing form state.
-  bool _isLoading = true; // Tracks whether the login status is being determined.
-  bool _isLoggedIn = false; // Tracks the user's login state.
-  String? _userName; // Stores the username of the logged-in user.
+  final AuthGuard _authGuard = AuthGuard();
+  AuthorizationFormBloc? _formBloc;
+  bool _isLoading = true;
+  bool _isLoggedIn = false;
+  String? _userName;
 
   @override
   void initState() {
     super.initState();
-    _initializeLoginStatus(); // Initialize login status on widget load.
+    _initializeLoginStatus();
   }
 
-  /// **Initialize login status**
-  /// Determines whether the user is logged in and sets up the form bloc for authentication if not.
+  /// Initializes login status using AuthGuard.
   Future<void> _initializeLoginStatus() async {
-    final isValid = await _authGuard.isSessionValid(); // Check if the session is valid.
+    final isValid = await _authGuard.isSessionValid();
     if (isValid) {
-      // If valid, retrieve the username from secure storage.
       final storage = GetIt.I<FlutterSecureStorage>();
       _userName = await storage.read(key: 'user_name') ?? "User";
     } else {
-      // If not logged in, initialize a new form bloc for login/registration.
       _formBloc = AuthorizationFormBloc();
     }
     setState(() {
-      _isLoggedIn = isValid; // Update login state.
-      _isLoading = false; // Loading complete.
+      _isLoggedIn = isValid;
+      _isLoading = false;
     });
   }
 
-  /// **Logout the user**
-  /// Clears the session and resets the form bloc for new authentication.
+  /// Logs out the user and clears session data using AuthGuard.
   Future<void> _logout() async {
-    await _authGuard.clearSession(); // Clear session data.
+    await _authGuard.clearSession();
     setState(() {
-      _isLoggedIn = false; // Set logged-in status to false.
-      _formBloc = AuthorizationFormBloc(); // Reinitialize the form bloc for new login attempts.
+      _isLoggedIn = false;
+      _formBloc = AuthorizationFormBloc(); // Create new form bloc for login.
     });
   }
 
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      // Show a loading indicator while determining login status.
       return Scaffold(
         body: Center(
           child: CircularProgressIndicator(),
@@ -72,17 +64,18 @@ class _AuthorizationState extends State<Authorization> {
 
     return Scaffold(
       appBar: AppBar(
-        // Dynamic title based on user's login state.
         title: Text(_isLoggedIn ? "Welcome, $_userName" : "Authorization"),
         actions: [
           if (!_isLoggedIn)
-            // Toggle between login and registration forms.
             TextButton(
               onPressed: () {
                 setState(() {
-                  _formBloc!.isLogin
-                      ? _formBloc!.switchToRegistration()
-                      : _formBloc!.switchToLogin();
+                  // Toggle between login and registration forms.
+                  if (_formBloc!.isLogin) {
+                    _formBloc!.switchToRegistration();
+                  } else {
+                    _formBloc!.switchToLogin();
+                  }
                 });
               },
               child: Text(
@@ -94,20 +87,18 @@ class _AuthorizationState extends State<Authorization> {
             ),
         ],
       ),
-      drawer: AppDrawer(currentPage: "Authorization"), // Add the navigation drawer.
+      drawer: AppDrawer(currentPage: "Authorization"),
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(AppDimensions.paddingMedium),
-          // Show either the logged-in UI or the authentication form.
           child: _isLoggedIn ? _buildLoggedInUI() : _buildAuthForm(),
         ),
       ),
     );
   }
 
-  /// **Build UI for logged-in users**
-  /// Displays a welcome message and a logout button.
+  /// Builds the UI for logged-in users.
   Widget _buildLoggedInUI() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -135,8 +126,7 @@ class _AuthorizationState extends State<Authorization> {
     );
   }
 
-  /// **Build the authentication form**
-  /// Dynamically displays login or registration form based on `isLogin` state.
+  /// Builds the authentication form.
   Widget _buildAuthForm() {
     return BlocProvider(
       create: (_) => _formBloc!,
@@ -145,34 +135,49 @@ class _AuthorizationState extends State<Authorization> {
           final theme = Theme.of(context);
 
           return FormBlocListener<AuthorizationFormBloc, String, String>(
-            // Display a loading dialog during form submission.
-            onLoading: (context, state) => _showLoadingDialog(context, theme),
-            onSubmitting: (context, state) => _showLoadingDialog(context, theme),
+            onLoading: (context, state) {
+              print("Form is loading");
+              _showLoadingDialog(context, theme);
+            },
+            onSubmitting: (context, state) {
+              print("Form is submitting");
+              _showLoadingDialog(context, theme);
+            },
             onSuccess: (context, state) async {
-              await _initializeLoginStatus(); // Re-check login status after successful form submission.
-              Navigator.of(context).pop(); // Close loading dialog.
+              print("Form submission successful");
+              await _initializeLoginStatus();
+              Navigator.of(context).pop();
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.successResponse ?? "Submission Successful"),
-                ),
+              SnackBar(
+                content: Text(state.successResponse ?? "Submission Successful"),
+              ),
               );
             },
             onFailure: (context, state) {
-              Navigator.of(context).pop(); // Close loading dialog.
+              print("Form submission FAILURE");
+              Navigator.of(context).pop(); // Close loading dialog
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.failureResponse ?? "Submission Failed"),
-                ),
+              SnackBar(
+                content: Text(state.failureResponse ?? "Submission Failed"),
+              ),
               );
+            },
+            onSubmissionFailed: (context, state) {
+              Navigator.of(context).pop(); // Close loading dialog
+              ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text("Check your credentials and try again!"),
+              ),
+            );
             },
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   if (_formBloc!.isLogin) ...[
-                    _buildLoginForm(theme), // Build login form.
+                    _buildLoginForm(theme),
                   ] else ...[
-                    _buildRegistrationForm(theme), // Build registration form.
+                    _buildRegistrationForm(theme),
                   ],
                 ],
               ),
@@ -183,21 +188,29 @@ class _AuthorizationState extends State<Authorization> {
     );
   }
 
-  /// **Build the login form**
-  /// Allows the user to log in with a username and password.
+  /// Builds the login form.
   Widget _buildLoginForm(ThemeData theme) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Center(
-          child: Text(
-            "Log in to access exclusive content!",
-            textAlign: TextAlign.center,
-            style: theme.textTheme.headlineLarge?.copyWith(
-              color: textColorLight,
-              fontSize: 30,
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Center(
+            child: Container(
+              width: double.infinity,
+              child: Text(
+                "Log in to access exclusive content!",
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+            color: textColorLight, fontSize: 30,
+                ),
+              ),
             ),
           ),
+        ),
+        Text(
+          "Login",
+          style: theme.textTheme.headlineLarge?.copyWith(color: textColorLight),
         ),
         const SizedBox(height: AppDimensions.paddingSmall),
         InputWidget(
@@ -220,21 +233,29 @@ class _AuthorizationState extends State<Authorization> {
     );
   }
 
-  /// **Build the registration form**
-  /// Allows the user to register for a new account.
+  /// Builds the registration form.
   Widget _buildRegistrationForm(ThemeData theme) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Center(
-          child: Text(
-            "Register to join our community!",
-            textAlign: TextAlign.center,
-            style: theme.textTheme.headlineLarge?.copyWith(
-              color: textColorLight,
-              fontSize: 30,
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Center(
+            child: Container(
+              width: double.infinity,
+              child: Text(
+                "Register to join our community!",
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+            color: textColorLight, fontSize: 30,
+                ),
+              ),
             ),
           ),
+        ),
+        Text(
+          "Create an Account",
+          style: theme.textTheme.headlineLarge?.copyWith(color: textColorLight),
         ),
         const SizedBox(height: AppDimensions.paddingSmall),
         InputWidget(
@@ -273,8 +294,7 @@ class _AuthorizationState extends State<Authorization> {
     );
   }
 
-  /// **Show a loading dialog**
-  /// Displays a loading indicator during form submission.
+  /// Displays a loading dialog during form submission.
   void _showLoadingDialog(BuildContext context, ThemeData theme) {
     showDialog(
       context: context,

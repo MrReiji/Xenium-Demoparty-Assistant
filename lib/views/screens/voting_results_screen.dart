@@ -1,3 +1,4 @@
+import 'package:demoparty_assistant/data/manager/voting/voting_manager.dart';
 import 'package:demoparty_assistant/models/category_model.dart';
 import 'package:demoparty_assistant/models/voting_entry_model.dart';
 import 'package:demoparty_assistant/views/widgets/universal/errors/error_display_widget.dart';
@@ -9,12 +10,6 @@ import 'package:demoparty_assistant/views/widgets/drawer/drawer.dart';
 import 'package:demoparty_assistant/views/widgets/cards/voting_result_card.dart';
 import 'package:get_it/get_it.dart';
 
-/// Screen that displays voting results categorized by competition entries.
-///
-/// The screen allows the user to:
-/// - View categories of competitions.
-/// - Select a category to view its voting results.
-/// - Handle errors and loading states effectively.
 class VotingResultsScreen extends StatefulWidget {
   const VotingResultsScreen({Key? key}) : super(key: key);
 
@@ -43,13 +38,12 @@ class _VotingResultsScreenState extends State<VotingResultsScreen> {
     super.dispose();
   }
 
-  /// Fetches available categories and handles pre-loading the first category's entries.
+  /// Fetches categories with comprehensive error handling.
   Future<void> _fetchCategories({bool forceRefresh = false}) async {
     setState(() => isLoading = true);
 
     try {
-      final fetchedCategories = await _manager.retrieveVotingCategories(forceRefresh: forceRefresh);
-
+      final fetchedCategories = await _manager.fetchCategories(forceRefresh: forceRefresh);
       if (fetchedCategories.isEmpty) {
         throw Exception("No categories available.");
       }
@@ -71,12 +65,12 @@ class _VotingResultsScreenState extends State<VotingResultsScreen> {
     }
   }
 
-  /// Fetches voting entries for the specified category.
+  /// Fetches voting entries for the selected category with error handling.
   Future<void> _fetchVotingEntries(String url, {bool forceRefresh = false}) async {
     setState(() => isListLoading = true);
 
     try {
-      final fetchedEntries = await _manager.retrieveCategoryVotingResults(url, forceRefresh: forceRefresh);
+      final fetchedEntries = await _manager.fetchVotingData(url, forceRefresh: forceRefresh);
       _entriesNotifier.value = fetchedEntries;
       setState(() => errorMessage = null);
     } catch (e) {
@@ -125,11 +119,61 @@ class _VotingResultsScreenState extends State<VotingResultsScreen> {
     );
   }
 
-  /// Builds the main content of the screen.
+  /// Builds the main content of the screen when no errors occur.
   Widget _buildContent(ThemeData theme) {
     return Column(
       children: [
-        _buildCategoryDropdown(theme),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Selected category:",
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: theme.colorScheme.onSurface.withOpacity(0.7),
+                ),
+              ),
+              const SizedBox(height: 8.0),
+              DecoratedBox(
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.surface,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: theme.colorScheme.primary.withOpacity(0.5),
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                  child: DropdownButton<String>(
+                    value: currentCategory,
+                    isExpanded: true,
+                    underline: Container(),
+                    menuMaxHeight: 200,
+                    icon: Icon(Icons.arrow_drop_down, color: theme.colorScheme.primary),
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: theme.colorScheme.onSurface,
+                    ),
+                    dropdownColor: theme.colorScheme.surface,
+                    items: categories.map((category) {
+                      return DropdownMenuItem<String>(
+                        value: category.name,
+                        child: Text(category.name),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      final selectedCategory = categories.firstWhere((c) => c.name == value);
+                      setState(() => currentCategory = selectedCategory.name);
+                      _fetchVotingEntries(selectedCategory.url.toString());
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
         Expanded(
           child: ValueListenableBuilder<List<VotingEntry>>(
             valueListenable: _entriesNotifier,
@@ -137,7 +181,9 @@ class _VotingResultsScreenState extends State<VotingResultsScreen> {
               if (entries.isEmpty) {
                 return ErrorDisplayWidget(
                   title: "No Entries Found",
-                  message: "No entries are available for this category. Try refreshing the data.",
+                  message: """
+No entries are available for this category. 
+Check your connection or refresh the data to retry.""",
                 );
               }
               return ListView.builder(
@@ -161,62 +207,7 @@ class _VotingResultsScreenState extends State<VotingResultsScreen> {
     );
   }
 
-  /// Builds the dropdown for selecting competition categories.
-  Widget _buildCategoryDropdown(ThemeData theme) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "Selected category:",
-            style: theme.textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: theme.colorScheme.onSurface.withOpacity(0.7),
-            ),
-          ),
-          const SizedBox(height: 8.0),
-          DecoratedBox(
-            decoration: BoxDecoration(
-              color: theme.colorScheme.surface,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: theme.colorScheme.primary.withOpacity(0.5),
-              ),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12.0),
-              child: DropdownButton<String>(
-                value: currentCategory,
-                isExpanded: true,
-                underline: Container(),
-                menuMaxHeight: 200,
-                icon: Icon(Icons.arrow_drop_down, color: theme.colorScheme.primary),
-                style: theme.textTheme.bodyLarge?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: theme.colorScheme.onSurface,
-                ),
-                dropdownColor: theme.colorScheme.surface,
-                items: categories.map((category) {
-                  return DropdownMenuItem<String>(
-                    value: category.name,
-                    child: Text(category.name),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  final selectedCategory = categories.firstWhere((c) => c.name == value);
-                  setState(() => currentCategory = selectedCategory.name);
-                  _fetchVotingEntries(selectedCategory.url.toString());
-                },
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// Displays an image in a dialog for interactive viewing.
+  /// Displays an image in a dialog when tapped.
   void _showImageDialog(BuildContext context, String imageUrl, String altText) {
     showDialog(
       context: context,

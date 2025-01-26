@@ -2,11 +2,11 @@ import 'package:demoparty_assistant/views/Theme.dart';
 import 'package:flutter/material.dart';
 
 class DrawerTile extends StatelessWidget {
-  final String title; // Title of the drawer tile
-  final IconData icon; // Icon to be displayed in the drawer tile
-  final GestureTapCallback? onTap; // Callback function when the tile is tapped
-  final bool isSelected; // Indicates if the tile is selected
-  final Color? iconColor; // Custom color for the icon
+  final String title;
+  final IconData icon;
+  final GestureTapCallback? onTap;
+  final bool isSelected;
+  final Color? iconColor;
 
   const DrawerTile({
     required this.title,
@@ -19,48 +19,48 @@ class DrawerTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context); // Get the current theme
-    final primaryColor = theme.primaryColor; // Primary color from the theme
-    final backgroundColor = theme.scaffoldBackgroundColor; // Background color from the theme
-    final iconThemeColor = theme.iconTheme.color; // Icon color from the theme
-    final textColor = theme.textTheme.bodyLarge?.color ?? Colors.black; // Text color from the theme
+    final theme = Theme.of(context);
+    final primaryColor = theme.primaryColor;
+    final backgroundColor = theme.scaffoldBackgroundColor;
+    final iconThemeColor = theme.iconTheme.color;
+    final textColor = theme.textTheme.bodyLarge?.color ?? Colors.black;
 
     return GestureDetector(
-      onTap: onTap, // Handle tap event
+      onTap: onTap,
       child: Container(
-        margin: EdgeInsets.symmetric(vertical: AppDimensions.paddingSmall / 2), // Vertical margin
+        margin: EdgeInsets.symmetric(vertical: AppDimensions.paddingSmall / 2),
         padding: EdgeInsets.symmetric(
-          vertical: AppDimensions.paddingSmall * 1.5, // Vertical padding
-          horizontal: AppDimensions.paddingMedium, // Horizontal padding
+          vertical: AppDimensions.paddingSmall * 1.5,
+          horizontal: AppDimensions.paddingMedium,
         ),
         decoration: BoxDecoration(
           color: isSelected
-              ? primaryColor.withOpacity(0.3) // Background color when selected
-              : backgroundColor.withOpacity(0.05), // Background color when not selected
-          borderRadius: BorderRadius.circular(AppDimensions.borderRadius), // Rounded corners
+              ? primaryColor.withOpacity(0.3)
+              : backgroundColor.withOpacity(0.05),
+          borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
           border: Border.all(
             color: isSelected
-                ? primaryColor // Border color when selected
-                : textColor.withOpacity(0.1), // Border color when not selected
+                ? primaryColor
+                : textColor.withOpacity(0.1),
           ),
         ),
         child: Row(
           children: [
             Icon(
               icon,
-              size: 20, // Icon size
+              size: 20,
               color: isSelected
-                  ? iconThemeColor // Icon color when selected
-                  : (iconColor ?? iconThemeColor)?.withOpacity(0.8), // Icon color when not selected
+                  ? iconThemeColor
+                  : (iconColor ?? iconThemeColor)?.withOpacity(0.8),
             ),
-            SizedBox(width: AppDimensions.paddingSmall * 1.5), // Spacing between icon and text
+            SizedBox(width: AppDimensions.paddingSmall * 1.5),
             Expanded(
               child: Text(
                 title,
                 style: theme.textTheme.titleMedium?.copyWith(
                   color: isSelected
-                      ? textColor // Text color when selected
-                      : textColor.withOpacity(0.8), // Text color when not selected
+                      ? textColor
+                      : textColor.withOpacity(0.8),
                 ),
               ),
             ),
@@ -69,7 +69,4 @@ class DrawerTile extends StatelessWidget {
       ),
     );
   }
-  
 }
-
-
